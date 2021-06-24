@@ -11,7 +11,7 @@
     <description>Drone plugin for DingTalk robot message</description>
 
     <properties>
-        <!-- Project Properties -->
+        <!-- Project properties -->
         <java.version>1.8</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -19,19 +19,34 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <!-- Dependencies Properties -->
+        <!-- Dependencies properties -->
         <junit.version>4.13</junit.version>
+        <httpclient.version>4.5.13</httpclient.version>
+        <commons-io.version>2.6</commons-io.version>
 
-        <!-- Plugins Properties -->
+        <!-- Plugins properties -->
         <maven-assembly-plugin.version>2.3</maven-assembly-plugin.version>
     </properties>
 
     <dependencies>
+        <!-- junit -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
-            <scope>test</scope>
+<!--            <scope>test</scope>-->
+        </dependency>
+        <!-- httpclient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
+        <!-- commons-io -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
         </dependency>
     </dependencies>
 

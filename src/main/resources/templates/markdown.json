@@ -1,0 +1,7 @@
+{
+  "msgtype": "markdown",
+  "markdown": {
+    "title": "%s",
+    "text": "# <font color=%s>%s</font> \n > 分支: %s | 提交人: %s | 序号: %s"
+  }
+}

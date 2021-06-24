@@ -1,45 +1,99 @@
 package com.jpldx.drone.plugin.dingtalk;
 
+import com.jpldx.drone.plugin.dingtalk.constants.ConfigProperties;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpHeaders;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+
 /**
+ * Application
+ *
  * @author jpldx
  */
 public class Main {
+    public static void main(String[] args) {
+        System.out.println("start sending...");
 
-    public static void main(String[] args)  {
-        System.out.println("Hello Docker ~!");
+        String accessToken = System.getenv(ConfigProperties.ENV_ACCESS_TOKEN);
+        if (accessToken == null) {
+            throw new IllegalArgumentException("access_token not specified");
+        }
 
-        String test = System.getenv("TEST");
-        System.out.println("ENV TEST: " + test);
+        try {
+            String result = sendRequest(ConfigProperties.WEBHOOK + "?access_token=" + accessToken);
+            if (result.contains("\"errcode\":0")) {
+                System.out.println("sending success!");
+            } else {
+                System.out.printf("sending failed: %s", result);
+            }
+        } catch (IOException e) {
+            System.out.printf("sending failed: %s", e.getMessage());
+        }
     }
 
-//    DingTalkClient client = new DefaultDingTalkClient("https://oapi.dingtalk.com/robot/send?access_token=1ca4981e75a2e938254350b5af4c6401587f636bebb6a9faae9309a1d0849a31");
-//    OapiRobotSendRequest request = new OapiRobotSendRequest();
-//        request.setMsgtype("text");
-//    OapiRobotSendRequest.Text text = new OapiRobotSendRequest.Text();
-//        text.setContent("测试文本消息");
-//        request.setText(text);
-//    OapiRobotSendRequest.At at = new OapiRobotSendRequest.At();
-//        at.setAtMobiles(Arrays.asList("132xxxxxxxx"));
-//    // isAtAll类型如果不为Boolean，请升级至最新SDK
-//        at.setIsAtAll(true);
-//        at.setAtUserIds(Arrays.asList("109929","32099"));
-//        request.setAt(at);
-//
-//        request.setMsgtype("link");
-//    OapiRobotSendRequest.Link link = new OapiRobotSendRequest.Link();
-//        link.setMessageUrl("https://www.dingtalk.com/");
-//        link.setPicUrl("");
-//        link.setTitle("时代的火车向前开");
-//        link.setText("这个即将发布的新版本，创始人xx称它为红树林。而在此之前，每当面临重大升级，产品经理们都会取一个应景的代号，这一次，为什么是红树林");
-//        request.setLink(link);
-//
-//        request.setMsgtype("markdown");
-//    OapiRobotSendRequest.Markdown markdown = new OapiRobotSendRequest.Markdown();
-//        markdown.setTitle("杭州天气test");
-//        markdown.setText("#### 杭州天气 @156xxxx8827\n" +
-//                "> 9度，西北风1级，空气良89，相对温度73%\n\n" +
-//                "> ![screenshot](https://gw.alicdn.com/tfs/TB1ut3xxbsrBKNjSZFpXXcXhFXa-846-786.png)\n"  +
-//                "> ###### 10点20分发布 [天气](http://www.thinkpage.cn/) \n");
-//        request.setMarkdown(markdown);
-//    OapiRobotSendResponse response = client.execute(request);
+    private static String sendRequest(String url) throws IOException {
+        String result = "";
+        HttpPost post = new HttpPost(url);
+
+        // Send a JSON data
+        post.setEntity(new StringEntity((markdownJson()), StandardCharsets.UTF_8));
+        post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(post)) {
+            result = EntityUtils.toString(response.getEntity());
+        }
+        return result;
+    }
+
+    private static String markdownJson() {
+        String markdownTpl = readMarkdownTpl();
+        return String.format(markdownTpl,
+                "新的构建通知",
+                ConfigProperties.BUILD_STATUS_SUCCESS.equals(DroneEnv.DRONE_BUILD_STATUS) ?
+                        ConfigProperties.SUCCESS_COLOR : ConfigProperties.FAILURE_COLOR,
+                DroneEnv.DRONE_REPO,
+                DroneEnv.DRONE_REPO_BRANCH,
+                DroneEnv.DRONE_COMMIT_AUTHOR,
+                DroneEnv.DRONE_BUILD_NUMBER
+        );
+    }
+
+    private static String readMarkdownTpl() {
+        String tpl = "";
+        InputStream is = Main.class.getClassLoader().getResourceAsStream("templates/markdown.json");
+        if(is != null){
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try{
+                byte[] buffer = new byte[1024];
+                int len;
+                while((len = is.read(buffer)) > 0){
+                    baos.write(buffer,0,len);
+                }
+            }catch(IOException e){
+                System.out.printf("read markdown template failed: %s",e.getMessage());
+            }finally {
+                try {
+                    baos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            tpl = baos.toString();
+        }
+        return tpl;
+    }
 }
