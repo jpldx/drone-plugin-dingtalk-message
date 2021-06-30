@@ -2,9 +2,10 @@
 
 一个 Java 实现的基于 Drone CI 的钉钉群机器人消息通知插件。
 
+
 # 效果预览
-![构建成功](assets/dingtalk-success.png)
-![构建失败](assets/dingtalk-failure.png)
+<img src="assets/dingtalk-success.png" alt="构建成功" style="zoom:25%;" />
+<img src="assets/dingtalk-failure.png" alt="构建失败" style="zoom:25%;" />
 
 
 # 使用方法
