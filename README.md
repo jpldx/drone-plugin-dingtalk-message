@@ -4,8 +4,8 @@
 
 
 ## 效果预览
-<img src="http://www.jpldx.com:2020/dingtalk-success.png" alt="构建成功" width = "50%" height = "50%" />
-<img src="http://www.jpldx.com:2020/dingtalk-failure.png" alt="构建失败" width = "50%" height = "50%" />
+<img src="http://www.jpldx.com:2020/dingtalk-build-success.png" alt="构建成功" width = "50%" height = "50%" />
+<img src="http://www.jpldx.com:2020/dingtalk-build-failure.png" alt="构建失败" width = "50%" height = "50%" />
 
 
 ## 使用方法
