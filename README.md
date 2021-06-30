@@ -22,6 +22,8 @@ steps:
         - failure
         - success
 ```
+## 相关地址
+[Docker Hub](https://hub.docker.com/r/jpldx/drone-plugin-dingtalk-message)
 
 ## 注意
 - 暂时只支持钉钉群机器人 `markdown` 消息类型。
