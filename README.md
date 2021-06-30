@@ -4,8 +4,8 @@
 
 
 # 效果预览
-<img src="assets/dingtalk-success.png" alt="构建成功" style="zoom:25%;" />
-<img src="assets/dingtalk-failure.png" alt="构建失败" style="zoom:25%;" />
+<img src="assets/dingtalk-success.png" alt="构建成功" width = "300" height = "200" />
+<img src="assets/dingtalk-failure.png" alt="构建失败" width = "300" height = "200" />
 
 
 # 使用方法
