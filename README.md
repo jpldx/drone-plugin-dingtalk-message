@@ -4,12 +4,11 @@
 
 
 # 效果预览
-<img src="assets/dingtalk-success.png" alt="构建成功" width = "200" height = "300" />
-<img src="assets/dingtalk-failure.png" alt="构建失败" width = "200" height = "300" />
+<img src="http://www.jpldx.com:2020/dingtalk-success.png" alt="构建成功" width = "300" height = "400" />
+<img src="http://www.jpldx.com:2020/dingtalk-failure.png" alt="构建失败" width = "300" height = "400" />
 
 
 # 使用方法
-
 你可以在 Drone CI 的 pipeline 文件里通过如下配置使用它：
 ```yaml
 steps:

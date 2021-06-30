@@ -2,6 +2,6 @@
   "msgtype": "markdown",
   "markdown": {
     "title": "%s",
-    "text": "# <font color=#FF0000>%s</font> \n > 分支: %s | 提交人: %s | 构建序号: %s \n\n > [提交信息](%s): %s \n\n > [构建信息](): [失败步骤] %s \n\n ![](http://www.jpldx.com:2020/drone-build-failure.png) \n\n"
+    "text": "# <font color=#FF0000>%s</font> \n > 分支: %s | 提交人: %s | 构建序号: %s \n\n > [提交信息](%s): %s \n\n > [构建信息](): [失败步骤] %s \n\n ![](http://www.jpldx.com:2020/failure.png) \n\n"
   }
 }
