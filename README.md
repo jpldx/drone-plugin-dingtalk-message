@@ -9,7 +9,7 @@
 
 
 # 使用方法
-你可以在 Drone CI 的 pipeline 文件里通过如下配置使用它：
+你可以在 [Drone CI](https://www.drone.io/) 的 pipeline 文件里通过如下配置使用它：
 ```yaml
 steps:
   - name: dingtalk
