@@ -2,6 +2,8 @@
 
 一个 Java 实现的基于 Drone CI 的钉钉群机器人消息通知插件。
 
+[Docker Hub 地址](https://hub.docker.com/r/jpldx/drone-plugin-dingtalk-message)
+
 
 ## 效果预览
 <img src="http://www.jpldx.com:2020/dingtalk-build-success.png" alt="构建成功" width = "50%" height = "50%" />
@@ -15,15 +17,13 @@ steps:
   - name: dingtalk
     pull: if-not-exists
     image: jpldx/drone-plugin-dingtalk-message
-    settings:
+    settings: 
       access_token: ${your_access_token}
     when:
       status:
         - failure
         - success
 ```
-## 相关地址
-[Docker Hub](https://hub.docker.com/r/jpldx/drone-plugin-dingtalk-message)
 
 ## 注意
 - 暂时只支持钉钉群机器人 `markdown` 消息类型。
