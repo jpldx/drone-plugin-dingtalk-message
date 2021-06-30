@@ -1,7 +1,7 @@
 package com.jpldx.drone.plugin.dingtalk;
 
 import com.jpldx.drone.plugin.dingtalk.constants.ConfigProperties;
-import org.apache.commons.io.IOUtils;
+import com.jpldx.drone.plugin.dingtalk.utils.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -10,7 +10,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -23,8 +25,9 @@ public class Main {
         System.out.println("start sending...");
 
         String accessToken = System.getenv(ConfigProperties.ENV_ACCESS_TOKEN);
-        if (accessToken == null) {
-            throw new IllegalArgumentException("access_token not specified");
+        if (StringUtils.isBlank(accessToken)) {
+            System.out.println("\"access_token\" not specified");
+            System.exit(1);
         }
 
         try {
@@ -33,9 +36,11 @@ public class Main {
                 System.out.println("sending success!");
             } else {
                 System.out.printf("sending failed: %s", result);
+                System.exit(1);
             }
         } catch (IOException e) {
             System.out.printf("sending failed: %s", e.getMessage());
+            System.exit(1);
         }
     }
 
@@ -55,21 +60,37 @@ public class Main {
     }
 
     private static String markdownJson() {
-        String markdownTpl = readMarkdownTpl();
-        return String.format(markdownTpl,
-                "新的构建通知",
-                ConfigProperties.BUILD_STATUS_SUCCESS.equals(DroneEnv.DRONE_BUILD_STATUS) ?
-                        ConfigProperties.SUCCESS_COLOR : ConfigProperties.FAILURE_COLOR,
+        // build status: success / failure
+        boolean isSuccess = ConfigProperties.BUILD_STATUS_SUCCESS.equals(DroneEnv.DRONE_BUILD_STATUS);
+        String markdownTpl = readMarkdownTemplate(isSuccess ?
+                "templates/markdown_success.json" :
+                "templates/markdown_failure.json");
+
+        String[] params = isSuccess ?
+            new String[]{
+                ConfigProperties.MSG_TITLE,
                 DroneEnv.DRONE_REPO,
                 DroneEnv.DRONE_REPO_BRANCH,
                 DroneEnv.DRONE_COMMIT_AUTHOR,
-                DroneEnv.DRONE_BUILD_NUMBER
-        );
+                DroneEnv.DRONE_BUILD_NUMBER,
+                DroneEnv.DRONE_COMMIT_LINK,
+                DroneEnv.DRONE_COMMIT_MESSAGE} :
+            new String[]{
+                ConfigProperties.MSG_TITLE,
+                DroneEnv.DRONE_REPO,
+                DroneEnv.DRONE_REPO_BRANCH,
+                DroneEnv.DRONE_COMMIT_AUTHOR,
+                DroneEnv.DRONE_BUILD_NUMBER,
+                DroneEnv.DRONE_COMMIT_LINK,
+                DroneEnv.DRONE_COMMIT_MESSAGE,
+                DroneEnv.DRONE_FAILED_STEPS
+        };
+        return String.format(markdownTpl, params);
     }
 
-    private static String readMarkdownTpl() {
+    private static String readMarkdownTemplate(String filepath) {
         String tpl = "";
-        InputStream is = Main.class.getClassLoader().getResourceAsStream("templates/markdown.json");
+        InputStream is = Main.class.getClassLoader().getResourceAsStream(filepath);
         if(is != null){
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try{
